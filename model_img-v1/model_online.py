@@ -3,8 +3,8 @@ from model_CNN_2 import getModelObject,predToClass
 from PIL import Image
 from torchvision.transforms import transforms
 try:
-    st.session_state.model = getModelObject().load_state_dict()
-    st.session_state.model = 
+    if "model" not in st.session_state:
+        st.session_state.model = getModelObject()
 
     transformation = transforms.Compose([
     transforms.Resize((64,64)),
@@ -26,5 +26,5 @@ try:
         logits = model(image_fit)
         prediction = predToClass(logits)
         st.markdown(f"**Prediction:** {prediction}")
-except Exception as e:
+except st.Exception as e:
     st.write(":red[Error Ocuurrd!!!]")
