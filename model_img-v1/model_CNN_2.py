@@ -1,5 +1,7 @@
+import torch
 from torch import nn
 from torch import load,argmax,softmax
+from pathlib import Path
 import json
 # Model 2
 def conv_block(in_channels:int,out_channels:int,kernel_size,stride,
@@ -41,27 +43,26 @@ class model_CNN_2(nn.Module):
         out = self.layer1_1(x)
         out = self.classifier(out)
         return out
-    ## Only For Debugging Purpose
-    def debug_forward(self,x):
-        out = self.layer1_1(x)
-        # out = self.classifier(out)
-        return out
-def getModelObject() -> object:
+# ENV
+_HERE = Path(__file__).resolve().parent
+_CKPT = _HERE / "best_model.pt"               
+_NAMES = _HERE / "names_of_the_animals.json" 
+with _NAMES.open("r", encoding="utf-8") as f:
+    _IDX2NAME = json.load(f)
+# Functions
+def getModelObject():
     """
         Needs 64x64 pixels images
     """
-    try:
-        model = model_CNN_2('dummy',90,3)
-        pre_model_dict = load('best_model.pt')
-        model.load_state_dict(pre_model_dict['model_state_dict'],strict=True)
-        model.eval()
-        return model
-    except Exception:
-        print("Model Loading Problem")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = model_CNN_2('dummy',90,3)
+    pre_model_dict = load(str(_CKPT),map_location='cpu')
+    model.load_state_dict(pre_model_dict['model_state_dict'],strict=True)
+    model.to(device).eval()
+    return model,device
 def predToClass(logits) -> str:
     softmax_logits = softmax(logits,dim=1)
-    pred = argmax(softmax_logits,dim=1)
-    with open('names_of_the_animals.json','r') as file:
-        dict = json.load(file)
-    return dict[str(pred.item())]
+    idx = argmax(softmax_logits,dim=1)
+    return _IDX2NAME[str(idx.item())]
+
         
