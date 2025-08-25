@@ -15,7 +15,6 @@ try:
     st.text("Predict Upto 90 Different Animals")
     st.badge(label='Accuracy 70%',color='green')
     uploaded_file = st.file_uploader("Choose an image...", type=["png","jpg"])
-    st.write(st.session_state)
     if uploaded_file is not None:
         model = st.session_state.model
         image = Image.open(uploaded_file)
@@ -26,5 +25,5 @@ try:
         logits = model(image_fit)
         prediction = predToClass(logits)
         st.markdown(f"**Prediction:** {prediction}")
-except st.Exception as e:
+except Exception as e:
     st.write(":red[Error Ocuurrd!!!]")
