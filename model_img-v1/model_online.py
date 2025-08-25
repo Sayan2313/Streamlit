@@ -25,6 +25,5 @@ try:
         logits = model(image_fit)
         prediction = predToClass(logits)
         st.markdown(f"**Prediction:** {prediction}")
-        st.write(st.session_state)
 except st.Exception as e:
     st.write(":red[Error Ocuurrd!!!]")
