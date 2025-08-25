@@ -5,7 +5,6 @@ from torchvision.transforms import transforms
 try:
     if "model" not in st.session_state:
         st.session_state.model = getModelObject()
-    model = st.session_state.model
 
     transformation = transforms.Compose([
     transforms.Resize((64,64)),
@@ -17,7 +16,7 @@ try:
     st.badge(label='Accuracy 70%',color='green')
     uploaded_file = st.file_uploader("Choose an image...", type=["png","jpg"])
     if uploaded_file is not None:
-        model = getModelObject()
+        model = st.session_state.model
         image = Image.open(uploaded_file)
         st.image(image, caption="Uploaded Image")
         image_tensor = transformation(image)
@@ -26,5 +25,6 @@ try:
         logits = model(image_fit)
         prediction = predToClass(logits)
         st.markdown(f"**Prediction:** {prediction}")
+        st.write(st.session_state)
 except st.Exception as e:
     st.write(":red[Error Ocuurrd!!!]")
