@@ -8,7 +8,8 @@ transformation = transforms.Compose([
     transforms.ToTensor()
 ])
 # Streamlit UI code
-st.title('Welcome to Image Classifier(v1)')
+st.title('Welcome to Animal Image Classifier(V1)')
+st.text("Predict Upto 90 Different Animals")
 st.badge(label='Accuracy 70%',color='green')
 uploaded_file = st.file_uploader("Choose an image...", type=["png","jpg"])
 if uploaded_file is not None:
