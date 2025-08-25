@@ -3,7 +3,10 @@ from model_CNN_2 import getModelObject,predToClass
 from PIL import Image
 from torchvision.transforms import transforms
 try:
-    model = getModelObject()
+    if "model" not in st.session_state:
+        st.session_state.model = getModelObject()
+    model = st.session_state.model
+
     transformation = transforms.Compose([
     transforms.Resize((64,64)),
     transforms.ToTensor()
@@ -14,12 +17,14 @@ try:
     st.badge(label='Accuracy 70%',color='green')
     uploaded_file = st.file_uploader("Choose an image...", type=["png","jpg"])
     if uploaded_file is not None:
+        model = getModelObject()
         image = Image.open(uploaded_file)
         st.image(image, caption="Uploaded Image")
         image_tensor = transformation(image)
         image_fit = image_tensor.unsqueeze(0)
+        assert model is not None, "Model is None"
         logits = model(image_fit)
         prediction = predToClass(logits)
         st.markdown(f"**Prediction:** {prediction}")
-except Exception as e:
-    st.text("Error Ocuurrd!!!")
+except st.Exception as e:
+    st.write(":red[Error Ocuurrd!!!]")
