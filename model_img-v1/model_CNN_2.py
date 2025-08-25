@@ -46,7 +46,7 @@ class model_CNN_2(nn.Module):
         out = self.layer1_1(x)
         # out = self.classifier(out)
         return out
-def getModelObject() -> model_CNN_2:
+def getModelObject() -> object:
     """
         Needs 64x64 pixels images
     """
